@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const dotenv = require("dotenv");
 const connectDB = require('./config/database');
 
 const app = express();
@@ -11,7 +12,9 @@ const PORT = process.env.PORT || 10000;
 connectDB();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: ['https://nbsia.netlify.app', 'http://localhost:5500', 'http://127.0.0.1:5500']
+}));
 app.use(express.json());
 
 // Serve the frontend folder as static files
