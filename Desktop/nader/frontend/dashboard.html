@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | NBS-AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --dark-bg: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-light: #f8fafc;
+            --text-gray: #94a3b8;
+            --success: #10b981;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 65px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
+            transition: 0.3s;
+        }
+
+        .logo img:hover {
+            filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.8));
+            transform: scale(1.05);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-badge {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid var(--primary);
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: 700;
+        }
+
+        .admin-badge {
+            background: rgba(236, 72, 153, 0.1);
+            border: 1px solid var(--secondary);
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--secondary);
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .welcome {
+            margin-bottom: 40px;
+        }
+
+        .welcome h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .welcome p {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+            border-radius: 20px;
+            transition: 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 2px solid rgba(99, 102, 241, 0.2);
+            transition: 0.3s;
+        }
+
+        .feature-card:hover .feature-icon {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: transparent;
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: var(--text-gray);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .upload-section {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+            border: 2px dashed var(--primary);
+            border-radius: 20px;
+            padding: 60px;
+            text-align: center;
+            margin-bottom: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .upload-section:hover {
+            border-color: var(--secondary);
+        }
+
+        .upload-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.2));
+            border: 3px dashed var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            transition: 0.3s;
+        }
+
+        .upload-section:hover .upload-icon {
+            transform: scale(1.1);
+            border-color: var(--secondary);
+        }
+
+        .upload-section h2 {
+            margin-bottom: 10px;
+        }
+
+        .upload-section p {
+            color: var(--text-gray);
+            margin-bottom: 20px;
+        }
+
+        .btn-upload {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+
+        .btn-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-gray);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .welcome h1 {
+                font-size: 1.8rem;
+            }
+
+            .upload-section {
+                padding: 40px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo">
+            <img src="logo.png" alt="NBS-AI Logo">
+        </div>
+        <div class="user-info">
+            <div class="user-badge" id="user-badge">مستخدم</div>
+            <div class="admin-badge" id="admin-link" style="display:none; cursor:pointer;"
+                onclick="window.location.href='admin.html'">🛡️ لوحة الإدارة</div>
+            <button class="btn-logout" onclick="logout()">تسجيل خروج</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="welcome">
+            <h1 id="welcome-text">مرحباً بك في مساحة العمل!</h1>
+            <p>ابدأ بإنشاء مشروع جديد أو اختر أداة من الأدوات أدناه</p>
+        </div>
+
+        <div class="upload-section" onclick="document.getElementById('file-input').click()">
+            <div class="upload-icon">⬆</div>
+            <h2>ارفع فيديو للبدء</h2>
+            <p>اسحب الملف هنا أو اضغط لاختيار فيديو من جهازك</p>
+            <button class="btn-upload">اختيار ملف</button>
+            <input type="file" id="file-input" accept="video/*" style="display:none;"
+                onchange="handleFileUpload(event)">
+        </div>
+
+        <h2 class="section-title">الأدوات السريعة</h2>
+        <div class="features-grid">
+            <a href="feature_4k.html" class="feature-card">
+                <div class="feature-icon">4K</div>
+                <h3>ترقية للـ 4K</h3>
+                <p>حول فيديوهاتك إلى جودة 4K فائقة الوضوح</p>
+            </a>
+            <a href="feature_beauty.html" class="feature-card">
+                <div class="feature-icon">◉</div>
+                <h3>تجميل الوجوه</h3>
+                <p>تحسين ملامح الوجه وإزالة العيوب تلقائياً</p>
+            </a>
+            <a href="feature_filters.html" class="feature-card">
+                <div class="feature-icon">◐</div>
+                <h3>فلاتر سينمائية</h3>
+                <p>أضف تأثيرات لونية احترافية لفيديوهاتك</p>
+            </a>
+
+            <a href="feature_image.html" class="feature-card">
+                <div class="feature-icon">🖼️</div>
+                <h3>توليد الصور</h3>
+                <p>حوّل وصفك إلى صور بالذكاء الاصطناعي</p>
+            </a>
+        </div>
+
+        <h2 class="section-title">المشاريع الأخيرة</h2>
+        <div id="projects-container">
+            <div class="empty-state">
+                <div style="font-size:4rem; margin-bottom:20px; opacity:0.5;">⊡</div>
+                <h3>لا توجد مشاريع بعد</h3>
+                <p>ابدأ بإنشاء مشروعك الأول عن طريق رفع فيديو</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/chatbot.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', async () => {
+            if (!requireAuth()) return;
+
+            const user = getUser();
+            document.getElementById('user-badge').textContent = user.name.split(' ')[0];
+            document.getElementById('welcome-text').textContent = `مرحباً ${user.name.split(' ')[0]}!`;
+
+            // Show admin link if the user is admin
+            if (isAdmin()) {
+                document.getElementById('admin-link').style.display = 'block';
+            }
+
+            await loadHistory();
+        });
+
+        async function loadHistory() {
+            try {
+                const res = await apiGet('/api/ai/history');
+                if (!res.ok) return;
+                const history = await res.json();
+
+                const container = document.getElementById('projects-container');
+                if (history.length > 0) {
+                    container.innerHTML = `<div class="features-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px,1fr));">` +
+                        history.map(item => `
+                        <div class="feature-card" style="padding: 15px;">
+                            <div class="feature-icon" style="width:50px;height:50px;font-size:1.5rem;">
+                                ${item.type === '3d-character' ? '🤖' : '🎬'}
+                            </div>
+                            <h4 style="font-size:1rem;">${item.type}</h4>
+                            <p style="font-size:0.8rem;">${new Date(item.createdAt).toLocaleDateString()}</p>
+                            ${item.resultUrl !== 'processed_locally_simulation' ?
+                                `<a href="${item.resultUrl}" target="_blank" style="color:var(--primary);font-size:0.8rem;display:block;margin-top:5px;">عرض النتيجة</a>` : ''}
+                        </div>`).join('') + `</div>`;
+                }
+            } catch (err) {
+                console.error("Failed to load history", err);
+            }
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                alert(`تم اختيار: ${file.name}\n\nسيتم معالجة الفيديو قريباً...`);
+            }
+        }
+    </script>
+</body>
+
+</html>

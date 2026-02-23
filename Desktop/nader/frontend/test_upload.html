@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <h2>Test Upload to Backend</h2>
+    <form id="uploadForm">
+        <input type="file" id="file" name="file" required><br><br>
+        <button type="submit">Upload and Test</button>
+    </form>
+    <pre id="result"></pre>
+    <script>
+        const token = '<INSERT_TOKEN_HERE>'; // Placeholder
+        document.getElementById('uploadForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('file', document.getElementById('file').files[0]);
+            formData.append('type', '4k-upscale');
+            formData.append('prompt', 'test');
+
+            try {
+                const res = await fetch('http://localhost:5000/api/ai/generate', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token },
+                    body: formData
+                });
+                const data = await res.json();
+                document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+            } catch (err) {
+                document.getElementById('result').innerText = err.toString();
+            }
+        };
+    </script>
+</body>
+
+</html>

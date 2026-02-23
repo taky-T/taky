@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | Admin - NBS-AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --dark-bg: #0f172a;
+            --text-light: #f8fafc;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-container {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .badge-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .badge-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .badge-rejected {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+            border: 1px solid var(--error);
+        }
+
+        .action-btn {
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: inherit;
+            transition: 0.2s;
+            margin-left: 5px;
+        }
+
+        .btn-approve {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-reject {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn-approve:hover,
+        .btn-reject:hover {
+            opacity: 0.8;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        #access-denied {
+            display: none;
+            text-align: center;
+            padding: 80px 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="access-denied">
+            <div style="font-size: 4rem; margin-bottom: 20px;">🔒</div>
+            <h2>وصول مرفوض</h2>
+            <p style="color: #94a3b8;">يجب أن تكون مسؤولاً للوصول إلى هذه الصفحة.</p>
+            <a href="dashboard.html" style="color: var(--primary);">العودة للوحة التحكم</a>
+        </div>
+
+        <div id="admin-panel">
+            <div class="top-bar">
+                <h1 style="border: none; padding: 0; margin: 0;">لوحة تحكم المسؤول 🛡️</h1>
+                <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الاسم</th>
+                            <th>الهاتف</th>
+                            <th>البريد الإلكتروني</th>
+                            <th>الصلاحية</th>
+                            <th>الحالة</th>
+                            <th>التاريخ</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table"></tbody>
+                </table>
+                <div id="empty-state" class="empty-state" style="display:none;">لا يوجد مستخدمين مسجلين حتى الآن.</div>
+            </div>
+
+            <div style="margin-top: 20px; text-align: center;">
+                <a href="index.html" style="color: rgba(255,255,255,0.5);">العودة للموقع</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        // Guard: admin only
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!requireAdmin()) return;
+            document.getElementById('admin-panel').style.display = 'block';
+            loadUsers();
+            setInterval(loadUsers, 10000);
+        });
+
+        async function loadUsers() {
+            const tbody = document.getElementById('users-table');
+            const emptyState = document.getElementById('empty-state');
+
+            try {
+                const res = await apiGet('/api/admin/users');
+
+                if (res.status === 401 || res.status === 403) {
+                    document.getElementById('admin-panel').style.display = 'none';
+                    document.getElementById('access-denied').style.display = 'block';
+                    return;
+                }
+
+                const users = await res.json();
+                tbody.innerHTML = '';
+
+                if (users.length === 0) {
+                    emptyState.style.display = 'block';
+                    return;
+                }
+
+                emptyState.style.display = 'none';
+
+                users.forEach((user) => {
+                    const tr = document.createElement('tr');
+                    let badgeClass = '', statusText = '', actionButtons = '';
+
+                    if (user.status === 'pending') {
+                        badgeClass = 'badge-pending'; statusText = 'قيد المراجعة';
+                        actionButtons = `
+                            <button class="action-btn btn-approve" onclick="updateStatus('${user._id}', 'active')">قبول</button>
+                            <button class="action-btn btn-reject" onclick="updateStatus('${user._id}', 'rejected')">رفض</button>`;
+                    } else if (user.status === 'active') {
+                        badgeClass = 'badge-active'; statusText = 'نشط';
+                        actionButtons = `<button class="action-btn btn-reject" onclick="updateStatus('${user._id}', 'rejected')">إيقاف</button>`;
+                    } else {
+                        badgeClass = 'badge-rejected'; statusText = 'مرفوض';
+                        actionButtons = `<button class="action-btn btn-approve" onclick="updateStatus('${user._id}', 'active')">تفعيل</button>`;
+                    }
+
+                    const roleLabel = user.role === 'admin' ? '🛡️ مسؤول' : '👤 مستخدم';
+
+                    tr.innerHTML = `
+                        <td>${user.name}</td>
+                        <td>${user.phone || '-'}</td>
+                        <td>${user.email}</td>
+                        <td>${roleLabel}</td>
+                        <td><span class="badge ${badgeClass}">${statusText}</span></td>
+                        <td>${new Date(user.joinDate).toLocaleDateString()}</td>
+                        <td>
+                            ${actionButtons}
+                            <button class="action-btn btn-reject" onclick="deleteUser('${user._id}')" style="background:#333;">حذف</button>
+                        </td>`;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error("Failed to load users", err);
+                alert("فشل الاتصال بالخادم. تأكد من تشغيل السيرفر.");
+            }
+        }
+
+        async function updateStatus(id, newStatus) {
+            try {
+                const res = await apiPut(`/api/admin/users/${id}/status`, { status: newStatus });
+                if (res.ok) loadUsers();
+                else alert("حدث خطأ أثناء تحديث الحالة");
+            } catch (err) { alert("فشل الاتصال بالخادم"); }
+        }
+
+        async function deleteUser(id) {
+            if (confirm('هل أنت متأكد من حذف هذا المستخدم نهائياً؟')) {
+                try {
+                    const res = await apiDelete(`/api/admin/users/${id}`);
+                    if (res.ok) loadUsers();
+                    else alert("حدث خطأ أثناء الحذف");
+                } catch (err) { alert("فشل الاتصال بالخادم"); }
+            }
+        }
+    </script>
+</body>
+
+</html>

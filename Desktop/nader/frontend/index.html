@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBS-AI VIDÉO PRO | أول محرر فيديو ذكي في تونس</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --dark-bg: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-light: #f8fafc;
+            --text-gray: #94a3b8;
+            --accent: #10b981;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 100%);
+            color: var(--text-light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Utils */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .grid {
+            display: grid;
+            gap: 40px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 50px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        /* Navbar */
+        nav {
+            padding: 20px 0;
+            position: relative;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-logo img {
+            height: 70px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
+            transition: 0.3s;
+        }
+
+        .nav-logo img:hover {
+            filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.8));
+            transform: scale(1.05);
+        }
+
+        /* Hero Section */
+        header {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding-top: 40px;
+            position: relative;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            z-index: -1;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 50px;
+            margin-bottom: 25px;
+            font-weight: 700;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        /* Top Announcement Banner */
+        .top-banner {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 15px 0;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .banner-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .banner-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .banner-item::before {
+            content: '✓';
+            color: var(--accent);
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .banner-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-gray);
+            max-width: 700px;
+            margin: 0 auto 40px;
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 60px;
+            animation: fadeInUp 0.8s ease-out 0.6s backwards;
+        }
+
+        .btn {
+            padding: 18px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--glass-border);
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background: var(--glass-border);
+            border-color: white;
+        }
+
+        /* Icons Container */
+        .floating-icons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 50px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .icon-box {
+            width: 80px;
+            height: 80px;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 100px 0;
+        }
+
+        .features-grid {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            padding: 40px 30px;
+            border-radius: 24px;
+            transition: 0.3s;
+            text-align: right;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            color: var(--text-gray);
+        }
+
+        /* How It Works */
+        .steps-section {
+            padding: 100px 0;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .steps-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+            position: relative;
+        }
+
+        .step-item {
+            flex: 1;
+            min-width: 280px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Pricing Area */
+        .pricing-section {
+            padding: 100px 0;
+        }
+
+        .pricing-card {
+            max-width: 500px;
+            margin: 0 auto;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 50px;
+            text-align: center;
+            position: relative;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 30px;
+            padding: 1px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.5;
+        }
+
+        .price-tag {
+            font-size: 4rem;
+            font-weight: 900;
+            margin: 20px 0;
+        }
+
+        .d17-box {
+            background: rgba(0, 71, 171, 0.15);
+            border: 1px solid #0047AB;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: right;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 60px 0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 20px;
+        }
+
+        .faq-question {
+            padding: 20px 0;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-answer {
+            padding-bottom: 20px;
+            color: var(--text-gray);
+            display: none;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--glass-border);
+            padding: 50px 0;
+            margin-top: 50px;
+            text-align: center;
+            color: var(--text-gray);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .steps-container {
+                flex-direction: column;
+            }
+
+            .steps-container::after {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="container nav-content">
+            <div class="nav-logo">
+                <img src="logo.png" alt="NBA-AI Logo">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <a href="login.html" class="btn btn-primary" id="login-nav-btn"
+                    style="padding: 10px 25px; font-size: 0.9rem; background: transparent; border: 1px solid rgba(255,255,255,0.2);">دخول</a>
+                <a href="signup.html" class="btn btn-primary" id="nav-btn"
+                    style="padding: 10px 25px; font-size: 0.9rem;">اشترك الآن</a>
+                <button id="logout-btn" onclick="logout()" class="btn btn-outline"
+                    style="display: none; padding: 10px 25px; font-size: 0.9rem; border-color: #ef4444; color: #ef4444;">
+                    تسجيل خروج
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Top Announcement Banner -->
+    <div class="top-banner">
+        <div class="banner-content">
+            <div class="banner-item">أول محرر فيديو في تونس</div>
+            <div class="banner-item">استعمال لأصحاب المشاريع وE-commerce و صناع المحتوى</div>
+            <div class="banner-item">أبدأ مشروعك ومتضيعش وقتك</div>
+            <div class="banner-item" style="color: var(--accent); font-weight: 800;">🎁 التجربي الأول مجاني</div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <header>
+        <div class="container">
+            <div class="hero-badge">✨ الجيل الجديد من المونتاج</div>
+            <h1 class="hero-title">اصنع فيديوهات احترافية<br><span class="gradient-text">بالذكاء الاصطناعي</span></h1>
+            <p class="hero-subtitle">حول أفكارك إلى محتوى مرئي مذهل في ثوانٍ. أول محرر فيديو ذكي في تونس يدعم اللهجة
+                التونسية ويعمل على هاتفك.</p>
+
+            <div class="btn-group">
+                <a href="signup.html" class="btn btn-primary" id="hero-cta">
+                    📱 اشترك الآن - 35 د.ت
+                </a>
+                <a href="#how-it-works" class="btn btn-outline">
+                    كيف يعمل؟
+                </a>
+            </div>
+
+            <div class="floating-icons">
+                <div class="icon-box">🎥</div>
+                <div class="icon-box">✨</div>
+                <div class="icon-box">🚀</div>
+                <div class="icon-box">🤖</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Features Grid -->
+    <section class="features-section container">
+        <div class="text-center">
+            <h2 class="section-title">لماذا NBS-AI؟</h2>
+        </div>
+        <div class="grid features-grid">
+            <div class="feature-card" onclick="handleFeatureClick('4k', 'feature_4k.html')"
+                style="cursor: pointer; display: block;">
+                <div class="feature-icon">✨</div>
+                <h3>جودة 4K فائقة</h3>
+                <p>حول الفيديوهات القديمة والمنخفضة الجودة إلى تحف فنية بدقة 4K واضحة تماماً بضغطة زر.</p>
+            </div>
+            <div class="feature-card" onclick="handleFeatureClick('beauty', 'feature_beauty.html')"
+                style="cursor: pointer; display: block;">
+                <div class="feature-icon">👤</div>
+                <h3>تجميل ذكي للوجوه</h3>
+                <p>خوارزميات متطورة لتحسين ملامح الوجه وإزالة العيوب تلقائياً مع الحفاظ على المظهر الطبيعي تنعيم
+                    البشرة و تبييض الأسنان تحسين جودة الأضاءة</p>
+            </div>
+            <div class="feature-card" onclick="handleFeatureClick('filters', 'feature_filters.html')"
+                style="cursor: pointer; display: block;">
+                <div class="feature-icon">🎨</div>
+                <h3>فلاتر سينمائية</h3>
+                <p>مكتبة ضخمة من الفلاتر اللونية المستوحاة من أكبر الأفلام العالمية لتضفي طابعاً احترافياً.</p>
+            </div>
+
+            <div class="feature-card" onclick="handleFeatureClick('image', 'feature_image.html')"
+                style="cursor: pointer; display: block;">
+                <div class="feature-icon">🖼️</div>
+                <h3>توليد الصور</h3>
+                <p>اكتب وصفاً وشاهد الذكاء الاصطناعي يحوله إلى صورة احترافية مذهلة.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="steps-section">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="section-title">كيف تبدأ؟</h2>
+            </div>
+            <div class="steps-container">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <h3>ارفع الفيديو</h3>
+                    <p>اختر الفيديو من معرض هاتفك وارفعه للمنصة.</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <h3>اختر التعديلات</h3>
+                    <p>حدد الأدوات: تحسين الجودة، قص، أو إضافة مؤثرات.</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <h3>استلم النتيجة</h3>
+                    <p>شاهد السحر! حمل الفيديو الجديد بجودة 4K.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="container" style="padding: 100px 0;">
+        <div class="text-center">
+            <h2 class="section-title">آراء المشتركين</h2>
+        </div>
+        <div class="grid features-grid">
+            <div class="feature-card">
+                <div style="font-size: 1.5rem; color: #fbbf24; margin-bottom: 10px;">⭐⭐⭐⭐⭐</div>
+                <p style="margin-bottom: 15px;">"أبليكاسيون طيارة برشا! فيديوهات تصويرتي ولات بالـ 4K والفيوز زادو
+                    بالباهي."</p>
+                <div style="font-weight: 700; color: white;">- أنيس ب. (صانع محتوى)</div>
+            </div>
+            <div class="feature-card">
+                <div style="font-size: 1.5rem; color: #fbbf24; margin-bottom: 10px;">⭐⭐⭐⭐</div>
+                <p style="margin-bottom: 15px;">"أسهل لوجيسيال مونتاج خدمت بيه في حياتي. الكليونات بهتو في الريزيلتا."
+                </p>
+                <div style="font-weight: 700; color: white;">- مريم ت. (مسوقة إلكترونية)</div>
+            </div>
+            <div class="feature-card">
+                <div style="font-size: 1.5rem; color: #fbbf24; margin-bottom: 10px;">⭐⭐⭐⭐⭐</div>
+                <p style="margin-bottom: 15px;">"الخدمة سريعة برشا والـ AI نقص عليا سوايع تعب متع مونتاج يعطيهم الصحة."
+                </p>
+                <div style="font-weight: 700; color: white;">- قيس ج. (مونتير)</div>
+            </div>
+            <div class="feature-card">
+                <div style="font-size: 1.5rem; color: #fbbf24; margin-bottom: 10px;">⭐⭐⭐⭐⭐</div>
+                <p style="margin-bottom: 15px;">"الفلاتر متع السينما روعة، تو نجم نخدم بروجيات كاليتي طالعة من تاليفوني
+                    برك."</p>
+                <div style="font-weight: 700; color: white;">- سيرين ع. (مصورة)</div>
+            </div>
+            <div class="feature-card">
+                <div style="font-size: 1.5rem; color: #fbbf24; margin-bottom: 10px;">⭐⭐⭐</div>
+                <p style="margin-bottom: 15px;">"الـ 3D والفازات الجدد طيارة، ننصح بيه أي واحد يبدا يخدم في الـ
+                    e-commerce."</p>
+                <div style="font-weight: 700; color: white;">- خليل م. (صاحب متجر إلكتروني)</div>
+            </div>
+            <div class="feature-card">
+                <div style="font-size: 1.5rem; color: #fbbf24; margin-bottom: 10px;">⭐⭐⭐⭐</div>
+                <p style="margin-bottom: 15px;">"سرفيس روعة والدعم الفني ديما يجاوبو في الوقت، البلاتفورم سهلتلي خدمتي."
+                </p>
+                <div style="font-weight: 700; color: white;">- يسرى ك. (صانعة محتوى)</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section container">
+        <div class="text-center">
+            <h2 class="section-title">باقة المحترفين</h2>
+        </div>
+        <div class="pricing-card">
+            <h3>الاشتراك الشهري</h3>
+            <div class="price-tag gradient-text">35 <span style="font-size: 1.5rem; color: var(--text-gray);">د.ت</span>
+            </div>
+            <p style="margin-bottom: 30px; color: var(--text-gray);">كل المميزات مفتوحة بلا حدود</p>
+
+            <ul style="list-style: none; text-align: right; margin-bottom: 30px;">
+                <li style="margin-bottom: 10px;">✅ عدد غير محدود من المشاريع</li>
+                <li style="margin-bottom: 10px;">✅ تصدير بجودة 4K</li>
+                <li style="margin-bottom: 10px;">✅ حذف العلامة المائية</li>
+                <li style="margin-bottom: 10px;">✅ دعم فني 24/7</li>
+            </ul>
+
+            <div class="d17-box">
+                <div style="font-weight: 900; color: #0047AB; margin-bottom: 10px;">💳 الدفع عبر D17</div>
+                <p>رقم الهاتف: <strong>28 113 087</strong></p>
+                <p style="font-size: 0.9rem; margin-top: 5px;">بعد التحويل، أرسل صورة الوصل عبر واتساب</p>
+            </div>
+
+            <a href="signup.html" class="btn btn-primary" id="pricing-cta"
+                style="width: 100%; justify-content: center;">
+                تفعيل الاشتراك الآن
+            </a>
+            <a href="https://wa.me/21628607447" class="btn btn-outline"
+                style="width: 100%; justify-content: center; margin-top: 15px; color: #25D366; border-color: #25D366;">
+                📱 واتساب: 28 607 447
+            </a>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section container">
+        <h2 class="text-center" style="margin-bottom: 40px; font-size: 2rem;">أسئلة شائعة</h2>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                هل يوجد فترة تجريبية؟
+                <span>+</span>
+            </div>
+            <div class="faq-answer">
+                نعم! نقدم يوم مجاني كامل لتجربة كافة المميزات قبل الاشتراك. تواصل معنا للحصول عليه.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                كيف يتم الدفع؟
+                <span>+</span>
+            </div>
+            <div class="faq-answer">
+                نقبل الدفع حالياً عبر خدمة D17 المحلية. العملية سهلة وآمنة.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                هل يعمل التطبيق على الآيفون والأندرويد؟
+                <span>+</span>
+            </div>
+            <div class="faq-answer">
+                نعم، منصتنا تعمل عبر المتصفح (Web App) مما يعني أنها متوافقة مع جميع أنواع الهواتف والأجهزة اللوحية
+                والحواسيب.
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div style="font-size: 2rem; margin-bottom: 20px;">🎬</div>
+            <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 30px;">
+                <a href="#" style="color: white; text-decoration: none;">سياسة الخصوصية</a>
+                <a href="#" style="color: white; text-decoration: none;">الشروط والأحكام</a>
+            </div>
+            <p>للدعم الفني: Nbsbensalem@gmail.com | واتساب: <a href="https://wa.me/21628607447"
+                    style="color: white; text-decoration: none;">28607447</a></p>
+            <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.6;">© 2024 NBS-AI. جميع الحقوق محفوظة. صنع بكل ❤️
+                في تونس.</p>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/chatbot.js"></script>
+    <script>
+        function toggleFaq(element) {
+            const item = element.parentElement;
+            const wasActive = item.classList.contains('active');
+
+            // Close all
+            document.querySelectorAll('.faq-item').forEach(i => {
+                i.classList.remove('active');
+                i.querySelector('.faq-question span').textContent = '+';
+            });
+
+            // Open clicked if wasn't active
+            if (!wasActive) {
+                item.classList.add('active');
+                element.querySelector('span').textContent = '-';
+            }
+        }
+
+
+
+
+        // Check Auth State - Redirect to Dashboard if logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            if (isLoggedIn()) {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+            // Hide logout button, show login/signup buttons
+            document.getElementById('logout-btn').style.display = 'none';
+            document.getElementById('login-nav-btn').style.display = '';
+            document.getElementById('nav-btn').style.display = '';
+        });
+
+        // Also update handleFeatureClick to use api.js isLoggedIn()
+        function handleFeatureClick(featureType, url) {
+            if (isLoggedIn()) {
+                window.location.href = url;
+                return;
+            }
+            const trialUsed = localStorage.getItem('nbsTrialUsed');
+            if (featureType === '4k' && !trialUsed) {
+                if (confirm('هذه تجربة مجانية للميزة 4K!\n\nبعد هذه التجربة، ستحتاج للاشتراك للوصول إلى جميع الميزات.\n\nهل تريد المتابعة؟')) {
+                    localStorage.setItem('nbsTrialUsed', 'true');
+                    window.location.href = url;
+                }
+            } else {
+                if (confirm('يجب عليك تسجيل الدخول للوصول إلى هذه الميزة.\n\nهل تريد التسجيل الآن؟')) {
+                    window.location.href = 'signup.html';
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

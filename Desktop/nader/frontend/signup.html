@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب | NBS-AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --dark-bg: #0f172a;
+            --text-light: #f8fafc;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 100%);
+            color: var(--text-light);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-container img {
+            height: 120px;
+            width: auto;
+            filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.4));
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .payment-info {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%);
+            border: 2px solid var(--primary);
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
+                border-color: var(--primary);
+            }
+
+            to {
+                box-shadow: 0 0 20px rgba(236, 72, 153, 0.4);
+                border-color: var(--secondary);
+            }
+        }
+
+        .d17-number {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 25px;
+            border-radius: 50px;
+            margin: 15px auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px dashed rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .d17-number:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <img src="logo.png" alt="NBS-AI Logo">
+        </div>
+        <h1>تفعيل اشتراكك</h1>
+
+        <div class="payment-info">
+            <div style="font-size: 3rem; margin-bottom: 10px;">📱💸</div>
+            <h3 style="margin: 0 0 10px 0; color: white;">خطوة أخيرة لتفعيل حسابك!</h3>
+            <p style="margin: 0; font-size: 1.1rem; line-height: 1.6; color: var(--text-light);">
+                لإتمام التسجيل، يرجى إرسال مبلغ الاشتراك <strong>(35 د.ت)</strong> عبر D17 إلى الرقم:
+            </p>
+            <div class="d17-number" onclick="copyD17()" title="اضغط لنسخ الرقم">
+                28607447 📋
+            </div>
+            <p style="font-size: 0.9rem; opacity: 0.8; margin: 0;">👇 ثم املأ بياناتك في الأسفل وسيتم التفعيل فوراً</p>
+        </div>
+
+        <form id="signup-form" onsubmit="handleSignup(event)">
+            <div class="form-group">
+                <label>الاسم الكامل</label>
+                <input type="text" id="fullname" required placeholder="أدخل اسمك الكامل">
+            </div>
+            <div class="form-group">
+                <label>رقم الهاتف (الذي حولت منه)</label>
+                <input type="tel" id="phone" required placeholder="مثال: 28 607 447">
+            </div>
+            <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <input type="email" id="email" required placeholder="example@email.com">
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="password" required placeholder="********">
+            </div>
+            <button type="submit" class="btn">تأكيد الدفع وإنشاء الحساب</button>
+        </form>
+
+        <a href="index.html" class="back-link">العودة للرئيسية</a>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        function copyD17() {
+            navigator.clipboard.writeText("28607447");
+            alert("تم نسخ رقم D17 بنجاح! ✅");
+        }
+
+        async function handleSignup(e) {
+            e.preventDefault();
+            const fullname = document.getElementById('fullname').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const btn = document.querySelector('button[type="submit"]');
+            btn.textContent = "جاري المعالجة...";
+            btn.disabled = true;
+
+            try {
+                const response = await apiPost('/api/auth/signup', { name: fullname, email, password, phone });
+                const data = await response.json();
+
+                if (response.ok) {
+                    btn.style.background = "#10b981";
+                    setTimeout(() => {
+                        alert("تم إرسال طلبك بنجاح! يرجى انتظار موافقة المسؤول لتفعيل الحساب.");
+                        window.location.href = "login.html?signup=success";
+                    }, 1500);
+                } else {
+                    alert(data.msg || "حدث خطأ أثناء التسجيل");
+                    btn.textContent = "تأكيد الدفع وإنشاء الحساب";
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                alert("فشل الاتصال بالخادم. تأكد من تشغيل الباك إند.");
+                btn.textContent = "تأكيد الدفع وإنشاء الحساب";
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>

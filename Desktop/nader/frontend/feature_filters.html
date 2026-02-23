@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فلاتر سينمائية | NBS-AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            /* Violet focus for filters */
+            --secondary: #ec4899;
+            --dark-bg: #0f172a;
+            --text-light: #f8fafc;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: radial-gradient(circle at 50% 0%, #2e1065 0%, #0f172a 100%);
+            color: var(--text-light);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            color: #94a3b8;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+        }
+
+        .upload-box {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            transition: 0.3s;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .upload-box:hover {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            display: none;
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            height: 10px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* Filter Selector */
+        .filter-scroll-container {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 20px 5px;
+            margin-bottom: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            /* Fallback for desktop */
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            min-width: 80px;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* Video Comparison */
+        .comparison-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            aspect-ratio: 16 / 9;
+            margin: 20px auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            display: none;
+            background: #000;
+        }
+
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #video-before {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-clipper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 2;
+            border-right: 2px solid white;
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        #video-after {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: filter 0.3s ease;
+            /* Smooth transition for filters */
+        }
+
+        /* CSS Filters */
+        .filter-none {
+            filter: none;
+        }
+
+        .filter-noir {
+            filter: grayscale(100%) contrast(1.2);
+        }
+
+        .filter-vintage {
+            filter: sepia(0.6) contrast(1.1) brightness(0.9);
+        }
+
+        .filter-cold {
+            filter: hue-rotate(180deg) saturate(0.5) brightness(1.1);
+        }
+
+        /* Basic cold sim */
+        .filter-vivid {
+            filter: saturate(1.8) contrast(1.1);
+        }
+
+        .filter-cinematic {
+            filter: contrast(1.1) saturate(1.2) brightness(0.9) hue-rotate(-10deg);
+        }
+
+        .slider-handle-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            z-index: 10;
+            cursor: ew-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            font-size: 1.2rem;
+            pointer-events: none;
+        }
+
+        .label {
+            position: absolute;
+            top: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .label-before {
+            right: 20px;
+        }
+
+        .label-after {
+            left: 20px;
+            color: var(--primary);
+        }
+
+        .result-actions {
+            margin-top: 30px;
+            display: none;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>فلاتر سينمائية</h1>
+        <p>مكتبة ضخمة من الفلاتر اللونية المستوحاة من أكبر الأفلام العالمية لتضفي طابعاً احترافياً على فيديوهاتك. اختر
+            المزاج المناسب لمشهدك بنقرة واحدة.</p>
+
+        <!-- Upload Area -->
+        <div id="upload-stage">
+            <div class="upload-box" id="drop-zone" onclick="document.getElementById('file-input').click()">
+                <span class="upload-icon">🎨</span>
+                <h3>اضغط لرفع فيديو أو اسحبه هنا</h3>
+                <p style="font-size: 0.9rem; opacity: 0.7;">يدعم MP4, MOV</p>
+            </div>
+            <input type="file" id="file-input" accept="video/*">
+            <div id="file-name" style="margin-bottom: 20px; font-weight: bold; color: var(--primary); display: none;">
+            </div>
+            <button id="process-btn" class="btn" style="display: none;" onclick="startProcessing()">استعراض الفلاتر
+                🎬</button>
+        </div>
+
+        <!-- Processing Area -->
+        <div id="processing-stage" style="display: none;">
+            <div style="font-size: 3rem; margin-bottom: 20px;">📼</div>
+            <h3 id="process-status">جاري رفع الملف...</h3>
+            <div class="progress-container" style="display: block;">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+
+        <!-- Filter Controls (Hidden initially) -->
+        <div id="filter-controls" style="display: none; width: 100%;">
+            <div class="filter-scroll-container">
+                <button class="filter-btn active" onclick="applyFilter('filter-none', 'عادي', this)">عادي</button>
+                <button class="filter-btn" onclick="applyFilter('filter-cinematic', 'سينمائي', this)">سينمائي</button>
+                <button class="filter-btn" onclick="applyFilter('filter-noir', 'نوار (أسود وأبيض)', this)">نوار</button>
+                <button class="filter-btn" onclick="applyFilter('filter-vintage', 'قديم', this)">قديم</button>
+                <button class="filter-btn" onclick="applyFilter('filter-vivid', 'حيوي', this)">حيوي</button>
+            </div>
+        </div>
+
+        <!-- Comparison Area -->
+        <div class="comparison-wrapper" id="comparison-wrapper">
+            <!-- Label Right (Original) -->
+            <div class="label label-before">الأصلي</div>
+
+            <!-- Video Layer 1: Original -->
+            <div class="video-container">
+                <video id="video-before" loop muted playsinline></video>
+            </div>
+
+            <!-- Video Layer 2: After (Clipped) -->
+            <div class="video-clipper" id="video-clipper">
+                <!-- Label Left (Enhanced) -->
+                <div class="label label-after" style="position: fixed; left: 20px; top: 20px;" id="label-after">عادي
+                </div>
+                <video id="video-after" class="filter-none" loop muted playsinline></video>
+            </div>
+
+            <!-- Slider Handle -->
+            <div class="slider-handle-btn" id="slider-handle">↔️</div>
+        </div>
+
+        <!-- Result Actions -->
+        <div class="result-actions" id="result-actions">
+            <button class="btn" onclick="downloadVideo()">⬇️ تحميل مع الفلتر</button>
+            <a href="index.html" class="btn"
+                style="background: transparent; border: 2px solid rgba(255,255,255,0.2);">الرئيسية</a>
+        </div>
+
+        <div style="margin-top: 50px;" id="back-link">
+            <a href="index.html" style="color: rgba(255,255,255,0.5); text-decoration: none;">إلغاء والعودة</a>
+        </div>
+
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/chatbot.js"></script>
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const processBtn = document.getElementById('process-btn');
+        const processingStage = document.getElementById('processing-stage');
+        const uploadStage = document.getElementById('upload-stage');
+        const comparisonWrapper = document.getElementById('comparison-wrapper');
+        const resultActions = document.getElementById('result-actions');
+        const filterControls = document.getElementById('filter-controls');
+
+        const videoBefore = document.getElementById('video-before');
+        const videoAfter = document.getElementById('video-after');
+        const videoClipper = document.getElementById('video-clipper');
+        const sliderHandle = document.getElementById('slider-handle');
+        const labelAfter = document.getElementById('label-after');
+
+        let currentFile = null;
+        let currentFilterClass = 'filter-none';
+
+        // File Handling
+        fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+
+        function handleFile(file) {
+            if (file && file.type.startsWith('video/')) {
+                currentFile = file;
+                document.getElementById('file-name').textContent = `Video: ${file.name}`;
+                document.getElementById('file-name').style.display = 'block';
+                processBtn.style.display = 'inline-block';
+            } else {
+                alert('الرجاء اختيار ملف فيديو صالح.');
+            }
+        }
+
+        // Processing Simulation
+        async function startProcessing() {
+            if (!requireAuth()) return;
+            const user = getUser();
+
+            uploadStage.style.display = 'none';
+            document.getElementById('back-link').style.display = 'none';
+            processingStage.style.display = 'block';
+            const status = document.getElementById('process-status');
+
+            try {
+                // Create FormData for file upload
+                const formData = new FormData();
+                formData.append('prompt', "video style transfer " + currentFile.name);
+                formData.append('type', 'video-filter');
+                formData.append('userId', user.id);
+                formData.append('file', currentFile);
+
+                const response = await apiPost('/api/ai/generate', formData);
+
+                if (!response.ok) throw new Error('Backend failed');
+
+                simulateProcessing();
+            } catch (err) {
+                console.error(err);
+                status.innerText = "حدث خطأ في الاتصال بالخادم!";
+                status.style.color = "var(--error)";
+            }
+        }
+
+        function simulateProcessing() {
+            let width = 0;
+            const bar = document.getElementById('progress-bar');
+            const status = document.getElementById('process-status');
+
+            const interval = setInterval(() => {
+                width += Math.random() * 5; // Faster than others
+                if (width > 100) width = 100;
+                bar.style.width = width + '%';
+
+                if (width < 30) status.textContent = "تحميل مكتبة الألوان...";
+                else if (width < 60) status.textContent = "تحليل الإضاءة...";
+                else if (width < 90) status.textContent = "تجهيز أداة الفلاتر...";
+                else status.textContent = "جاهز!";
+
+                if (width >= 100) {
+                    clearInterval(interval);
+                    setTimeout(showComparison, 500);
+                }
+            }, 50);
+        }
+
+        function showComparison() {
+            processingStage.style.display = 'none';
+            filterControls.style.display = 'block'; // Show filters
+            comparisonWrapper.style.display = 'block';
+            resultActions.style.display = 'flex';
+
+            // Load Video Source
+            const url = URL.createObjectURL(currentFile);
+            videoBefore.src = url;
+            videoAfter.src = url;
+
+            // Strict Sync Logic
+            videoBefore.onloadedmetadata = () => {
+                videoBefore.play();
+                videoAfter.play();
+            };
+
+            function syncVideos() {
+                if (Math.abs(videoBefore.currentTime - videoAfter.currentTime) > 0.1) {
+                    videoAfter.currentTime = videoBefore.currentTime;
+                }
+                if (videoBefore.paused !== videoAfter.paused) {
+                    if (videoBefore.paused) {
+                        videoAfter.pause();
+                    } else {
+                        videoAfter.play();
+                    }
+                }
+                requestAnimationFrame(syncVideos);
+            }
+            syncVideos();
+
+            // Initial Sizing
+            updateSlider(50);
+
+            // Apply default "Cinematic" just to show change? Or keep Normal.
+            // Let's keep Normal active initially (already set in HTML).
+        }
+
+        // Filter Application Logic
+        function applyFilter(filterClass, filterName, btn) {
+            // Update Active Button
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Remove old filter class
+            videoAfter.classList.remove(currentFilterClass);
+
+            // Add new filter class
+            currentFilterClass = filterClass;
+            videoAfter.classList.add(currentFilterClass);
+
+            // Update Label
+            labelAfter.textContent = filterName;
+        }
+
+        // Slider Logic
+        let isDragging = false;
+        comparisonWrapper.addEventListener('mousedown', () => isDragging = true);
+        comparisonWrapper.addEventListener('mouseup', () => isDragging = false);
+        document.addEventListener('mouseup', () => isDragging = false);
+        comparisonWrapper.addEventListener('touchstart', () => isDragging = true);
+        comparisonWrapper.addEventListener('touchend', () => isDragging = false);
+
+        comparisonWrapper.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            moveSlider(e.clientX);
+        });
+        comparisonWrapper.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            moveSlider(e.touches[0].clientX);
+        });
+        comparisonWrapper.addEventListener('click', (e) => moveSlider(e.clientX));
+
+        function moveSlider(clientX) {
+            const rect = comparisonWrapper.getBoundingClientRect();
+            let percent = ((clientX - rect.left) / rect.width) * 100;
+            if (percent < 0) percent = 0;
+            if (percent > 100) percent = 100;
+            updateSlider(percent);
+        }
+
+        function updateSlider(percent) {
+            videoClipper.style.width = percent + '%';
+            sliderHandle.style.left = percent + '%';
+            const wrapperWidth = comparisonWrapper.offsetWidth;
+            videoAfter.style.width = wrapperWidth + 'px';
+        }
+
+        window.addEventListener('resize', () => {
+            if (comparisonWrapper.style.display === 'block') {
+                const wrapperWidth = comparisonWrapper.offsetWidth;
+                videoAfter.style.width = wrapperWidth + 'px';
+            }
+        });
+
+        function downloadVideo() {
+            if (!currentFile) return;
+
+            const btn = document.querySelector('.result-actions .btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'جاري تطبيق الفلتر الخاص بك... ⏳';
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+
+            const video = document.createElement('video');
+            video.src = URL.createObjectURL(currentFile);
+            video.muted = true;
+
+            video.onloadedmetadata = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext('2d');
+
+                const stream = canvas.captureStream(30);
+                const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+                const chunks = [];
+
+                recorder.ondataavailable = e => chunks.push(e.data);
+                recorder.onstop = () => {
+                    const blob = new Blob(chunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = currentFile.name.replace(/\.[^/.]+$/, "") + "_" + currentFilterClass + ".webm";
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                };
+
+                video.play();
+                recorder.start();
+
+                const filterStyle = getComputedStyle(document.getElementById('video-after')).filter;
+
+                function draw() {
+                    if (video.paused || video.ended) {
+                        if (recorder.state === 'recording') recorder.stop();
+                        return;
+                    }
+
+                    ctx.filter = filterStyle !== 'none' ? filterStyle : 'none';
+                    ctx.globalAlpha = 1.0;
+                    ctx.globalCompositeOperation = 'source-over';
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                    requestAnimationFrame(draw);
+                }
+                draw();
+            };
+        }
+    </script>
+</body>
+
+</html>
