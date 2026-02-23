@@ -5,7 +5,8 @@ const path = require('path');
 const connectDB = require('./config/database');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
+const cors = require("cors");
 
 // Connect to MongoDB
 connectDB();
@@ -45,7 +46,7 @@ app.use((err, req, res, next) => {
         fullError: JSON.stringify(err, Object.getOwnPropertyNames(err))
     });
 });
-
+app.listen(PORT, () => console.log("Server running"));
 app.listen(PORT, () => {
     console.log(`✅ [UPDATED v2] Server running on http://localhost:${PORT}`);
     console.log(`📁 Serving frontend from: ${path.join(__dirname, '..', 'frontend')}`);
