@@ -10,9 +10,14 @@ import shutil
 # It extracts frames from the video, runs the executable on the frames, and stitches them back.
 
 def download_realesrgan(bin_dir):
-    url = "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.5.0/realesrgan-ncnn-vulkan-20220424-windows.zip"
+    is_win = sys.platform == "win32"
+    url = "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.5.0/realesrgan-ncnn-vulkan-20220424-windows.zip" if is_win else \
+          "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.5.0/realesrgan-ncnn-vulkan-20220424-ubuntu.zip"
+    
     zip_path = os.path.join(bin_dir, "realesrgan.zip")
-    if os.path.exists(os.path.join(bin_dir, "realesrgan-ncnn-vulkan.exe")):
+    exe_name = "realesrgan-ncnn-vulkan.exe" if is_win else "realesrgan-ncnn-vulkan"
+    
+    if os.path.exists(os.path.join(bin_dir, exe_name)):
         return
 
     print("Downloading Real-ESRGAN executable...")
@@ -31,7 +36,12 @@ def process_video(input_video, output_video, type_str):
     bin_dir = os.path.join(os.path.dirname(__file__), 'bin')
     download_realesrgan(bin_dir)
     
-    executable = os.path.join(bin_dir, "realesrgan-ncnn-vulkan.exe")
+    is_win = sys.platform == "win32"
+    executable = os.path.join(bin_dir, "realesrgan-ncnn-vulkan.exe" if is_win else "realesrgan-ncnn-vulkan")
+    
+    # On Linux, we need to make the binary executable
+    if not is_win:
+        os.chmod(executable, 0o755)
     frames_dir = os.path.join(os.path.dirname(input_video), 'temp_frames')
     out_frames_dir = os.path.join(os.path.dirname(input_video), 'temp_out_frames')
     
