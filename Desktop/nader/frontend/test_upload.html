@@ -18,7 +18,7 @@
             formData.append('prompt', 'test');
 
             try {
-                const res = await fetch('http://localhost:5000/api/ai/generate', {
+                const res = await fetch('http://localhost:10000/api/ai/generate', {
                     method: 'POST',
                     headers: { 'Authorization': 'Bearer ' + token },
                     body: formData

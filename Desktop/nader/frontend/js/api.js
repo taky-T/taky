@@ -4,7 +4,9 @@
  * Change API_BASE here to switch between development and production.
  */
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:10000'
+    : 'https://taky-gu4i.onrender.com';
 
 /**
  * Get stored auth token from localStorage
