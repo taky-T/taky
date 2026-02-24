@@ -169,14 +169,13 @@ router.post('/generate', (req, res, next) => {
 
                 // Wrap in a promise to await the command
                 await new Promise((resolve, reject) => {
-                    console.log(`[AI GENERATE] Executing: ${pythonExe} ${scriptPath} "${videoPath}" "${outputPath}" "${type}"`);
-                    // Use array of arguments with execFile for better security and path handling, 
-                    // but keeping exec for now to match your style while fixing the path.
+                    console.log(`[AI GENERATE] STARTING EXECUTION: ${pythonExe}`);
                     const cmd = isWin
                         ? `"${pythonExe}" "${scriptPath}" "${videoPath}" "${outputPath}" "${type}"`
                         : `${pythonExe} "${scriptPath}" "${videoPath}" "${outputPath}" "${type}"`;
 
                     exec(cmd, (error, stdout, stderr) => {
+                        console.log(`[AI GENERATE] EXEC FINISHED. Result code: ${error ? error.code : 0}`);
                         if (stdout) console.log('Python Stdout:', stdout);
                         if (error) {
                             console.error('Python Stderr:', stderr);
