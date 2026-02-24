@@ -9,7 +9,8 @@ const auth = require('../middleware/auth');
 // @desc    Register a new user
 // @access  Public
 router.post('/signup', async (req, res) => {
-    const { name, email, password, phone } = req.body;
+    let { name, email, password, phone } = req.body;
+    if (email) email = email.toLowerCase().trim();
 
     if (!name || !email || !password) {
         return res.status(400).json({ msg: 'Please provide name, email, and password' });
@@ -41,7 +42,8 @@ router.post('/signup', async (req, res) => {
 // @desc    Authenticate user & get token
 // @access  Public
 router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+    if (email) email = email.toLowerCase().trim();
 
     if (!email || !password) {
         return res.status(400).json({ msg: 'Please provide email and password' });
