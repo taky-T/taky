@@ -153,11 +153,11 @@
     container.innerHTML = `
         <div id="ai-chat-window">
             <div class="chat-header">
-                <h3>مساعد NBS-AI</h3>
+                <h3>Couch NBS</h3>
                 <span id="close-chat" style="cursor:pointer; font-size:1.2rem;">&times;</span>
             </div>
             <div class="chat-messages" id="chat-messages">
-                <div class="message message-ai">أهلاً بك! أنا مساعد NBS-AI. كيف يمكنني مساعدتك اليوم؟</div>
+                <div class="message message-ai">أهلاً بك! أنا Couch NBS. كيف يمكنني مساعدتك اليوم؟</div>
             </div>
             <div class="typing-indicator" id="typing-indicator" style="padding: 0 20px;">AI يكتب...</div>
             <div class="chat-input-area">
