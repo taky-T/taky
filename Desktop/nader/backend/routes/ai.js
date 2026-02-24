@@ -149,15 +149,35 @@ router.post('/generate', (req, res, next) => {
             console.log(`[AI GENERATE] Processing video locally for ${type}, file: ${videoPath}`);
 
             try {
-                // Determine pathes for Python and the script
-                const pythonExe = path.join(__dirname, '..', 'venv', 'Scripts', 'python.exe');
+                // Determine paths for Python and the script
+                // Render uses Linux, which uses 'venv/bin/python' (no .exe)
+                const isWin = process.platform === "win32";
+
+                // On Render (Linux), we typically use the system 'python3' or 'python' 
+                // unless a venv was explicitly built. 
+                // We'll try to find the venv first, then fallback to 'python3'
+                let pythonExe = isWin
+                    ? path.join(__dirname, '..', 'venv', 'Scripts', 'python.exe')
+                    : path.join(__dirname, '..', 'venv', 'bin', 'python');
+
+                // If the venv doesn't exist on Render, just use 'python3'
+                if (!isWin && !fs.existsSync(pythonExe)) {
+                    pythonExe = 'python3';
+                }
+
                 const scriptPath = path.join(__dirname, '..', 'scripts', 'upscale.py');
 
                 // Wrap in a promise to await the command
                 await new Promise((resolve, reject) => {
                     console.log(`[AI GENERATE] Executing: ${pythonExe} ${scriptPath} "${videoPath}" "${outputPath}" "${type}"`);
-                    exec(`"${pythonExe}" "${scriptPath}" "${videoPath}" "${outputPath}" "${type}"`, (error, stdout, stderr) => {
-                        console.log('Python Stdout:', stdout);
+                    // Use array of arguments with execFile for better security and path handling, 
+                    // but keeping exec for now to match your style while fixing the path.
+                    const cmd = isWin
+                        ? `"${pythonExe}" "${scriptPath}" "${videoPath}" "${outputPath}" "${type}"`
+                        : `${pythonExe} "${scriptPath}" "${videoPath}" "${outputPath}" "${type}"`;
+
+                    exec(cmd, (error, stdout, stderr) => {
+                        if (stdout) console.log('Python Stdout:', stdout);
                         if (error) {
                             console.error('Python Stderr:', stderr);
                             reject(error);
