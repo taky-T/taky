@@ -12,9 +12,7 @@ const PORT = process.env.PORT || 10000;
 connectDB();
 
 // Middleware
-app.use(cors({
-    origin: ['https://nbsia.netlify.app', 'http://localhost:5500', 'http://127.0.0.1:5500']
-}));
+app.use(cors()); // Allow all origins to resolve CORS blockers during proxy errors
 app.use(express.json());
 
 // Serve the frontend folder as static files
@@ -49,7 +47,10 @@ app.use((err, req, res, next) => {
     });
 });
 app.listen(PORT, () => console.log("Server running"));
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`✅ [UPDATED v2] Server running on http://localhost:${PORT}`);
     console.log(`📁 Serving frontend from: ${path.join(__dirname, '..', 'frontend')}`);
 });
+
+// Set timeout to 5 minutes (300,000ms) for long video processing
+server.timeout = 300000;
