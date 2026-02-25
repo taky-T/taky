@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
 const crypto = require('crypto');
-const sendVerificationEmail = require('../utils/email');
+const { sendVerificationEmail, sendPasswordResetEmail } = require('../utils/email');
 
 // @route   POST /api/auth/signup
 // @desc    Register a new user
@@ -146,6 +146,121 @@ router.get('/verify-email/:token', async (req, res) => {
     } catch (err) {
         console.error('[VERIFICATION ERROR]', err.message);
         res.status(500).send('<h1>Server Error</h1>');
+    }
+});
+
+// @route   POST /api/auth/resend-verification
+// @desc    Resend verification email
+// @access  Public
+router.post('/resend-verification', async (req, res) => {
+    let { email } = req.body;
+    if (email) email = email.toLowerCase().trim();
+
+    if (!email) {
+        return res.status(400).json({ msg: 'يرجى إدخال البريد الإلكتروني.' });
+    }
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({ msg: 'هذا البريد الإلكتروني غير مسجل.' });
+        }
+
+        if (user.isEmailVerified) {
+            return res.status(400).json({ msg: 'هذا الحساب مفعل مسبقاً.' });
+        }
+
+        const verificationToken = crypto.randomBytes(32).toString('hex');
+        user.emailVerificationToken = verificationToken;
+        await user.save();
+
+        try {
+            await sendVerificationEmail(email, verificationToken);
+            res.json({ msg: 'تم إعادة إرسال رابط التفعيل بنجاح. تحقق من بريدك الإلكتروني.' });
+        } catch (emailErr) {
+            console.error('[EMAIL ERROR]', emailErr.message);
+            res.status(500).json({ msg: 'فشل في إرسال البريد الإلكتروني. حاول مرة أخرى لاحقاً.' });
+        }
+
+    } catch (err) {
+        console.error('[RESEND VERIFICATION ERROR]', err.message);
+        res.status(500).json({ msg: 'حدث خطأ في الخادم.' });
+    }
+});
+
+// @route   POST /api/auth/forgot-password
+// @desc    Send password reset email
+// @access  Public
+router.post('/forgot-password', async (req, res) => {
+    let { email } = req.body;
+    if (email) email = email.toLowerCase().trim();
+
+    if (!email) {
+        return res.status(400).json({ msg: 'يرجى إدخال البريد الإلكتروني.' });
+    }
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({ msg: 'هذا البريد الإلكتروني غير مسجل.' });
+        }
+
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour from now
+        await user.save();
+
+        try {
+            await sendPasswordResetEmail(email, resetToken);
+            res.json({ msg: 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.' });
+        } catch (emailErr) {
+            console.error('[EMAIL ERROR]', emailErr.message);
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpires = undefined;
+            await user.save();
+            res.status(500).json({ msg: 'فشل في إرسال البريد الإلكتروني. حاول مرة أخرى لاحقاً.' });
+        }
+
+    } catch (err) {
+        console.error('[FORGOT PASSWORD ERROR]', err.message);
+        res.status(500).json({ msg: 'حدث خطأ في الخادم.' });
+    }
+});
+
+// @route   POST /api/auth/reset-password/:token
+// @desc    Reset password using token
+// @access  Public
+router.post('/reset-password/:token', async (req, res) => {
+    const { password } = req.body;
+
+    if (!password) {
+        return res.status(400).json({ msg: 'يرجى إدخال كلمة المرور الجديدة.' });
+    }
+
+    try {
+        const user = await User.findOne({
+            resetPasswordToken: req.params.token,
+            resetPasswordExpires: { $gt: Date.now() } // Check if token is not expired
+        });
+
+        if (!user) {
+            return res.status(400).json({ msg: 'رابط إعادة تعيين كلمة المرور غير صالح أو منتهي الصلاحية.' });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(password, salt);
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+
+        await user.save();
+
+        res.json({ msg: 'تم تغيير كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول.' });
+
+    } catch (err) {
+        console.error('[RESET PASSWORD ERROR]', err.message);
+        res.status(500).json({ msg: 'حدث خطأ في الخادم.' });
     }
 });
 

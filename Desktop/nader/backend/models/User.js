@@ -40,7 +40,9 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    emailVerificationToken: String
+    emailVerificationToken: String,
+    resetPasswordToken: String,
+    resetPasswordExpires: Date
 });
 
 module.exports = mongoose.model('User', UserSchema);

@@ -160,8 +160,17 @@
 
         <div id="status-msg" class="status-message"></div>
 
+        <a href="forgot-password.html" class="link" style="margin-top: 10px;">نسيت كلمة المرور؟</a>
         <a href="signup.html" class="link">عضو جديد؟ اشترك هنا</a>
         <a href="index.html" class="link">العودة للرئيسية</a>
+
+        <!-- Resend Verification Section (Hidden by default) -->
+        <div id="resend-section" style="display: none; text-align: center; margin-top: 15px;">
+            <button onclick="resendVerification()" class="btn"
+                style="background: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid var(--warning); padding: 10px; font-size: 0.9rem;">
+                إعادة إرسال رابط التفعيل
+            </button>
+        </div>
     </div>
 
     <script src="js/api.js"></script>
@@ -174,6 +183,8 @@
             msg.className = "status-message status-pending";
             msg.style.display = "block";
         }
+
+        let lastFailedEmail = ""; // Store email for resend functionality
 
         // Redirect if already logged in
         if (isLoggedIn()) {
@@ -203,6 +214,12 @@
                     msg.textContent = data.msg || "الحساب غير نشط أو البريد غير مفعل.";
                     msg.className = "status-message status-pending";
                     msg.style.display = "block";
+
+                    // If it's an unverified email issue, show resend button
+                    if (data.msg && data.msg.includes('تفعيل بريدك الإلكتروني')) {
+                        lastFailedEmail = email;
+                        document.getElementById('resend-section').style.display = "block";
+                    }
                 } else {
                     msg.textContent = data.msg || "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
                     msg.className = "status-message status-rejected";
@@ -215,6 +232,36 @@
             } finally {
                 btn.textContent = "دخول";
                 btn.disabled = false;
+            }
+        }
+
+        async function resendVerification() {
+            if (!lastFailedEmail) return;
+
+            const msg = document.getElementById('status-msg');
+            const resendBtn = document.querySelector('#resend-section button');
+            resendBtn.textContent = "جاري الإرسال...";
+            resendBtn.disabled = true;
+
+            try {
+                const response = await apiPost('/api/auth/resend-verification', { email: lastFailedEmail });
+                const data = await response.json();
+
+                if (response.ok) {
+                    msg.textContent = data.msg || "تم إرسال الرابط بنجاح.";
+                    msg.className = "status-message status-success";
+                    msg.style.display = "block";
+                    document.getElementById('resend-section').style.display = "none";
+                } else {
+                    msg.textContent = data.msg || "حدث خطأ أثناء إرسال البريد.";
+                    msg.className = "status-message status-rejected";
+                }
+            } catch (err) {
+                msg.textContent = "فشل الاتصال بالخادم.";
+                msg.className = "status-message status-rejected";
+            } finally {
+                resendBtn.textContent = "إعادة إرسال رابط التفعيل";
+                resendBtn.disabled = false;
             }
         }
     </script>
