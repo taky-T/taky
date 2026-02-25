@@ -48,6 +48,7 @@
             margin-bottom: 30px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
@@ -199,7 +200,7 @@
                     saveAuth(data.token, data.user);
                     window.location.href = "dashboard.html";
                 } else if (response.status === 403) {
-                    msg.textContent = data.msg || "الحساب غير نشط.";
+                    msg.textContent = data.msg || "الحساب غير نشط أو البريد غير مفعل.";
                     msg.className = "status-message status-pending";
                     msg.style.display = "block";
                 } else {

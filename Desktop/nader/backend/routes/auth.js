@@ -18,6 +18,12 @@ router.post('/signup', async (req, res) => {
         return res.status(400).json({ msg: 'Please provide name, email, and password' });
     }
 
+    // Basic regex validation for email
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ msg: 'يرجى إدخال بريد إلكتروني صحيح.' });
+    }
+
     try {
         let user = await User.findOne({ email });
 
@@ -73,6 +79,10 @@ router.post('/login', async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ msg: 'Invalid credentials' });
+        }
+
+        if (!user.isEmailVerified) {
+            return res.status(403).json({ msg: 'يرجى تفعيل بريدك الإلكتروني أولاً. تحقق من علبة الوارد.' });
         }
 
         if (user.status !== 'active') {
