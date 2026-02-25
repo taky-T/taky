@@ -34,7 +34,12 @@ const UserSchema = new mongoose.Schema({
     joinDate: {
         type: Date,
         default: Date.now
-    }
+    },
+    isEmailVerified: {
+        type: Boolean,
+        default: false
+    },
+    emailVerificationToken: String
 });
 
 module.exports = mongoose.model('User', UserSchema);

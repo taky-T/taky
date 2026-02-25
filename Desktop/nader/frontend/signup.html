@@ -46,6 +46,7 @@
             margin-bottom: 30px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
@@ -228,7 +229,7 @@
                 if (response.ok) {
                     btn.style.background = "#10b981";
                     setTimeout(() => {
-                        alert("تم إرسال طلبك بنجاح! يرجى انتظار موافقة المسؤول لتفعيل الحساب.");
+                        alert("تم إرسال طلبك بنجاح! يرجى التحقق من بريدك الإلكتروني لتفعيل الحساب، ثم انتظر موافقة المسؤول.");
                         window.location.href = "login.html?signup=success";
                     }, 1500);
                 } else {
